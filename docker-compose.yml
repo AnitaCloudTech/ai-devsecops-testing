@@ -1,0 +1,31 @@
+version: "3.9"
+
+services:
+
+  ai-engine:
+    build: .
+    env_file: .env
+    volumes:
+      - ./src:/app/src
+      - ./tests:/app/tests
+    command: ["src.ai_engine.security_analyzer", "--source", "src/example_module.py"]
+
+  sonarqube:
+    image: sonarqube:community
+    ports:
+      - "9000:9000"
+    environment:
+      SONAR_ES_BOOTSTRAP_CHECKS_DISABLE: "true"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+
+  # Primer aplikacije koja se testira (zameniti sopstvenim projektom)
+  app:
+    build: ./examples/sample_app
+    ports:
+      - "8000:8000"
+
+volumes:
+  sonarqube_data:
+  sonarqube_extensions:
